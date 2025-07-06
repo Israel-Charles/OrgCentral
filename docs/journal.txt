@@ -1,0 +1,21 @@
+I wanted to find a way to help manage organizations/clubs, automate a few things here and there, admin dashboard, email notifications, etc...
+I looked it ways to do that. Some options are Google Sheet with Google Apps Script, Airtable (Free Plan), CiviCRM, DIY Web app, etc... I opted for the DIY Web App option. I believe that this option can be also be a decent project, especially since I already have a domain name, a home server, and some experience working on similar project.
+
+For the DIY Web App options I did some research on ways to implement it and I settled for the following stack:
+    Backend: Node.js, Express
+    Frontend: Next.js
+    Email: Nodemailer
+    Database: MongoDB Atlas
+    Auth: JWT (JSON Web Tokens)
+    API: REST
+    Repo: GitHub
+
+The repo for the project have the following structure:
+    /backend
+    /frontend
+    /shared
+    /docs
+        journal.txt
+        command-log.txt
+    README.md
+
