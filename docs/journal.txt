@@ -10,12 +10,27 @@ For the DIY Web App options I did some research on ways to implement it and I se
     API: REST
     Repo: GitHub
 
-The repo for the project have the following structure:
+I also did some research for possible sctructure and layout of the src files. I have settled for the following structure for now:
     /backend
+        /config
     /frontend
     /shared
+        /models
+        /schema
+        constant.js
+    /tests
+        /unit-tests
+        /e2e-tests
     /docs
         journal.txt
-        command-log.txt
+        command-logs.txt
     README.md
 
+I created a MongoDB Atlas free tier account and started working on the backend in order to connect it to the database. (NodeJS and npm was already installed on my machine). I initialized npm on the backend folder to manage the node packages and I intalled express, mongoose, and dotenv for now.
+I added the following to the "scripts" section of `package.json`
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+
+I created a `.env` file and set the MongoDB connection string to a constant in order to not have it show up in the source code for security reasons.
+I created a created a db.js file in the config folder of the backend folder in order to modularize the part of the code that connects to the database.
+I created the server.js file to set up the backend server and testing connection to the database. Challenge [1] encountered (see challenges-faced.txt file).
