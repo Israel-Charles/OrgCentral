@@ -16,8 +16,6 @@ I also did some research for possible sctructure and layout of the src files. I 
     /frontend
     /shared
         /models
-        /schema
-        constant.js
     /tests
         /unit-tests
         /e2e-tests
@@ -25,6 +23,7 @@ I also did some research for possible sctructure and layout of the src files. I 
         journal.txt
         command-logs.txt
     README.md
+    .gitignore
 
 I created a MongoDB Atlas free tier account and started working on the backend in order to connect it to the database. (NodeJS and npm was already installed on my machine). I initialized npm on the backend folder to manage the node packages and I intalled express, mongoose, and dotenv for now.
 I added the following to the "scripts" section of `package.json`
@@ -34,3 +33,6 @@ I added the following to the "scripts" section of `package.json`
 I created a `.env` file and set the MongoDB connection string to a constant in order to not have it show up in the source code for security reasons.
 I created a created a db.js file in the config folder of the backend folder in order to modularize the part of the code that connects to the database.
 I created the server.js file to set up the backend server and testing connection to the database. Challenge [1] encountered (see challenges-faced.txt file).
+I updated package.json file to contain mopre information about the project and updated "main: index.js" to "main: server.js"
+I created a User model and included the following fields first name, middle name, last name, email, phone number, date of birth, status (active, inactive, etc..), positions, groups (admin, PR, marketing, etc), join date, mentor, mentees, last login date, balance (fines/dues decrease the balance, payment increase the balance), total donation, authentification { password hash, email verified, email verification code, email verification code expiration, account lock}, settings {email notifications{ enable, fines, payment}}, metadate {notes, studentID, good deeds, accomplishment, social media, interests, skils, etc}
+i created some indexes for database lookup perfromance (email, group, position, balance). I added some virtual fields (not saved in databse but calculated based on otehr data) for checking if account is locked and to chack if balance is dept or credit

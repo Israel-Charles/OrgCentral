@@ -6,3 +6,4 @@ touch server.js
 touch .env
 mkdir config
 touch config/db.js
+touch ../shared/models/User.js
