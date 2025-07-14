@@ -2,10 +2,10 @@ I wanted to find a way to help manage organizations/clubs, automate a few things
 I looked it ways to do that. Some options are Google Sheet with Google Apps Script, Airtable (Free Plan), CiviCRM, DIY Web app, etc... I opted for the DIY Web App option. I believe that this option can be also be a decent project, especially since I already have a domain name, a home server, and some experience working on similar project.
 
 For the DIY Web App options I did some research on ways to implement it and I settled for the following stack:
-    Backend: Node.js, Express
-    Frontend: Next.js
+    Backend: JavaScript, Node.js, Express
+    Frontend: JavaScript, React.js, Next.js
     Email: Nodemailer
-    Database: MongoDB Atlas
+    Database: MongoDB Atlas Free Tier
     Auth: JWT (JSON Web Tokens)
     API: REST
     Repo: GitHub
@@ -34,5 +34,6 @@ I created a `.env` file and set the MongoDB connection string to a constant in o
 I created a created a db.js file in the config folder of the backend folder in order to modularize the part of the code that connects to the database.
 I created the server.js file to set up the backend server and testing connection to the database. Challenge [1] encountered (see challenges-faced.txt file).
 I updated package.json file to contain mopre information about the project and updated "main: index.js" to "main: server.js"
-I created a User model and included the following fields first name, middle name, last name, email, phone number, date of birth, status (active, inactive, etc..), positions, groups (admin, PR, marketing, etc), join date, mentor, mentees, last login date, balance (fines/dues decrease the balance, payment increase the balance), total donation, authentification { password hash, email verified, email verification code, email verification code expiration, account lock}, settings {email notifications{ enable, fines, payment}}, metadate {notes, studentID, good deeds, accomplishment, social media, interests, skils, etc}
+I created a User model and included the following fields:
+    first name, middle name, last name, email, phone number, date of birth, status (active, inactive, etc..), positions, groups (admin, PR, marketing, etc), join date, mentor, mentees, last login date, balance (fines/dues decrease the balance, payment increase the balance), total donation, authentification { password hash, email verified, email verification code, email verification code expiration, account lock}, settings {email notifications{ enable, fines, payment}}, metadata {notes, studentID, good deeds, accomplishment, social media, interests, skils, etc}
 i created some indexes for database lookup perfromance (email, group, position, balance). I added some virtual fields (not saved in databse but calculated based on otehr data) for checking if account is locked and to chack if balance is dept or credit
