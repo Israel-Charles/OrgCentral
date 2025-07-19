@@ -32,7 +32,7 @@ const AuthenticationSchema = new mongoose.Schema(
 const SettingsSchema = new mongoose.Schema(
   {
     emailNotifications: {
-      enable: { type: Boolean, default: true },
+      isEnabled: { type: Boolean, default: true },
       fines: { type: Boolean, default: true },
       payments: { type: Boolean, default: true },
     },
@@ -220,8 +220,8 @@ const UserSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields automatically
-    toJSON: { getters: true }, // Enable getters on conversion to JSON
-    toObject: { getters: true }, // Enable getters on conversion to Object
+    toJSON: { getters: true, virtuals: true }, // Enable getters and virtuals on conversion to JSON
+    toObject: { getters: true, virtuals: true }, // Enable getters and virtuals on conversion to Object
   }
 );
 
@@ -230,6 +230,12 @@ UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ group: 1 });
 UserSchema.index({ position: 1 });
 UserSchema.index({ balance: 1 });
+
+// Virtual for full name
+UserSchema.virtual("fullName").get(function () {
+  const middle = this.middleName ? ` ${this.middleName} ` : ` `;
+  return `${this.firstName}${middle}${this.lastName}`;
+});
 
 // Virtual for account locked status
 UserSchema.virtual("isLocked").get(function () {
