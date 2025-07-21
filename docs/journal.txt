@@ -39,4 +39,8 @@ I created a User model and included the following fields:
 i created some indexes for database lookup perfromance (email, group, position, balance). I added some virtual fields (not saved in databse but calculated based on otehr data) for getting full name, checking if account is locked, and to chack if balance is dept or credit.
 
 I restructured the repo by moving the models folder from shared to backend because I believe the models will be only used by the backend server.
-I also added fodler for middleware, routes, controllers in the backend folder and added utils in the shared folder
+I also added folders for middleware, routes, controllers in the backend folder and added utils in the shared folder.
+
+I created simple CRUD opperation APIs for users. I created a user controller file that is responsible for getting the data and send it. I created an user route file that is reponsible for routing the request to the correct user controller function. And I added the origin api route "api/user" in the server.js file.
+I ran into an issue where mongoose was saying that there was a duplicate schema index on 'email'. I found out it was because in the model, I had set unique to true when defining email - whcih automatically create an index for it; but then later I specifically created an index for email. so there was 2 indexes defined for email which raises the error. I fixed it by removing the first one "unique: true" and left the later "UserSchema.index({ email: 1 }, { unique: true });" including the second "unique: true"
+

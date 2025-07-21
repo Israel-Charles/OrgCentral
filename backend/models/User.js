@@ -1,3 +1,5 @@
+// backend/models/User.js
+
 const mongoose = require("mongoose");
 
 // Sub-schema: Authentication
@@ -100,7 +102,7 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true, // uniqueness is added later in the indexes and uniqueness section
       lowercase: true,
       trim: true,
       match: [/.+@.+\..+/, "Please enter a valid email address"],
@@ -225,7 +227,7 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for performance
+// Indexes for performance and uniqueness
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ group: 1 });
 UserSchema.index({ position: 1 });
