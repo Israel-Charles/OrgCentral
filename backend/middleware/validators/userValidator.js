@@ -1,112 +1,220 @@
 // /backend/middleware/validators/userValidators.js
 
 const Joi = require("joi");
+const { parsePhoneNumberFromString } = require("libphonenumber-js");
 const UserEnums = require("../../../shared/constants/enums");
 
-const userSchema = Joi.object({
-  firstName: Joi.string()
+// Format names with apostrophes, hyphens, etc.
+const formatName = (name) => {
+  if (!name || typeof name !== "string") return name;
+
+  return name.trim().replace(/\b\w+/g, (word) => {
+    if (word.includes("'")) {
+      return word
+        .split("'")
+        .map(
+          (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+        )
+        .join("'");
+    }
+    if (word.includes("-")) {
+      return word
+        .split("-")
+        .map(
+          (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+        )
+        .join("-");
+    }
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+};
+
+// Extend Joi for phone number validation
+const customJoi = Joi.extend((joi) => ({
+  type: "phoneNumber",
+  base: joi.string(),
+  messages: {
+    "phoneNumber.invalid": "Please provide a valid phone number.",
+  },
+  validate(value, helpers) {
+    if (!value || value.trim() === "") return { value: "" };
+
+    const phone = parsePhoneNumberFromString(value, "US");
+    if (!phone || !phone.isValid()) {
+      return { value, errors: helpers.error("phoneNumber.invalid") };
+    }
+    return { value: phone.format("E.164") };
+  },
+}));
+
+// Base schema for creation
+const baseUserSchema = {
+  firstName: customJoi
+    .string()
     .trim()
     .min(2)
     .max(50)
     .pattern(/^[\p{L}\p{M} '-]+$/u)
-    .required()
+    .custom((value) => formatName(value))
     .messages({
       "string.pattern.base":
         "First name may only contain letters, spaces, hyphens, and apostrophes.",
     }),
 
-  middleName: Joi.string()
+  middleName: customJoi
+    .string()
     .trim()
     .max(50)
     .pattern(/^[\p{L}\p{M} '-]+$/u)
-    .allow(null, ""),
+    .allow(null, "")
+    .custom((value) => (value ? formatName(value) : value)),
 
-  lastName: Joi.string()
+  lastName: customJoi
+    .string()
     .trim()
     .min(2)
     .max(50)
     .pattern(/^[\p{L}\p{M} '-]+$/u)
-    .required()
+    .custom((value) => formatName(value))
     .messages({
       "string.pattern.base":
         "Last name may only contain letters, spaces, hyphens, and apostrophes.",
     }),
 
-  email: Joi.string().email().lowercase().required(),
+  email: customJoi.string().email().lowercase(),
 
-  phoneNumber: Joi.string().trim().allow(null, ""), // Optional
+  phoneNumber: customJoi.phoneNumber().trim().allow(null, ""),
 
-  dateOfBirth: Joi.date().less("now").messages({
+  dateOfBirth: customJoi.date().less("now").messages({
     "date.less": "Date of birth must be in the past.",
   }),
 
-  status: Joi.string()
+  status: customJoi
+    .string()
     .valid(...UserEnums.statuses)
     .default("pending"),
 
-  positions: Joi.array()
-    .items(Joi.string().valid(...UserEnums.positions))
+  positions: customJoi
+    .array()
+    .items(customJoi.string().valid(...UserEnums.positions))
     .min(1)
     .unique()
     .default(["Member"])
-    .messages({
-      "any.only": "Invalid position provided.",
+    .custom((value) => {
+      if (!value || value.length === 0) return ["Member"];
+      return value.includes("Member") ? value : [...value, "Member"];
     }),
 
-  groups: Joi.array()
-    .items(Joi.string().valid(...UserEnums.groups))
+  groups: customJoi
+    .array()
+    .items(customJoi.string().valid(...UserEnums.groups))
     .min(1)
     .unique()
-    .default(["Member"]),
+    .default(["Member"])
+    .custom((value) => {
+      if (!value || value.length === 0) return ["Member"];
+      return value.includes("Member") ? value : [...value, "Member"];
+    }),
 
-  mentor: Joi.string().hex().length(24).allow(null),
-  mentees: Joi.array().items(Joi.string().hex().length(24)),
+  mentor: customJoi.string().hex().length(24).allow(null),
+  mentees: customJoi.array().items(customJoi.string().hex().length(24)),
 
-  balance: Joi.number().precision(2).default(0),
-  totalDonation: Joi.number().min(0).precision(2).default(0),
+  balance: customJoi.number().precision(2).default(0),
+  totalDonation: customJoi.number().min(0).precision(2).default(0),
 
-  authentication: Joi.object({
-    passwordHash: Joi.string().required(),
-    emailVerified: Joi.boolean().default(false),
-    emailVerificationCode: Joi.string().allow(null),
-    emailVerificationExpires: Joi.date().allow(null),
-    lockUntil: Joi.date().allow(null),
+  authentication: customJoi.object({
+    passwordHash: customJoi.string(),
+    emailVerified: customJoi.boolean().default(false),
+    emailVerificationCode: customJoi.string().allow(null),
+    emailVerificationExpires: customJoi.date().allow(null),
+    lockUntil: customJoi.date().allow(null),
   }),
 
-  settings: Joi.object({
-    emailNotifications: Joi.object({
-      isEnabled: Joi.boolean().default(true),
-      fines: Joi.boolean().default(true),
-      payments: Joi.boolean().default(true),
+  settings: customJoi.object({
+    emailNotifications: customJoi.object({
+      isEnabled: customJoi.boolean().default(true),
+      fines: customJoi.boolean().default(true),
+      payments: customJoi.boolean().default(true),
     }),
   }),
 
-  metadata: Joi.object({
-    studentID: Joi.string().trim().allow(null, ""),
-    notes: Joi.string().allow(null, ""),
-    goodDeeds: Joi.array().items(Joi.string()).default([]),
-    accomplishments: Joi.array().items(Joi.string()).default([]),
-    socialMedia: Joi.object({
-      instagram: Joi.string().uri().allow(null, ""),
-      twitter: Joi.string().uri().allow(null, ""),
-      linkedin: Joi.string().uri().allow(null, ""),
-      facebook: Joi.string().uri().allow(null, ""),
-    }),
-    interests: Joi.array().items(Joi.string()).default([]),
-    skills: Joi.array().items(Joi.string()).default([]),
-    customFields: Joi.object().pattern(Joi.string(), Joi.any()),
+  metadata: customJoi.object({
+    studentID: customJoi.string().trim().allow(null, ""),
+    notes: customJoi.string().allow(null, ""),
+    goodDeeds: customJoi.array().items(customJoi.string()).default([]),
+    accomplishments: customJoi.array().items(customJoi.string()).default([]),
+    socialMedia: customJoi
+      .array()
+      .items(
+        customJoi.object({
+          platform: customJoi.string().trim(),
+          url: customJoi.string().trim(),
+        })
+      )
+      .default([]),
+    interests: customJoi.array().items(customJoi.string()).default([]),
+    skills: customJoi.array().items(customJoi.string()).default([]),
+    customFields: customJoi
+      .object()
+      .pattern(customJoi.string(), customJoi.any()),
+  }),
+};
+
+// Creation schema: required fields
+const userCreationSchema = customJoi.object({
+  ...baseUserSchema,
+  firstName: baseUserSchema.firstName.required(),
+  lastName: baseUserSchema.lastName.required(),
+  email: baseUserSchema.email.required(),
+  authentication: baseUserSchema.authentication.keys({
+    passwordHash: customJoi.string().required(),
   }),
 });
 
-const validateUser = (req, res, next) => {
-  const { error } = userSchema.validate(req.body, { abortEarly: false });
+// Update schema: all optional
+const userUpdateSchema = customJoi
+  .object(baseUserSchema)
+  .fork(Object.keys(baseUserSchema), (field) => field.optional());
+
+// Middleware: validateUserCreation
+const validateUserCreation = (req, res, next) => {
+  const { error, value } = userCreationSchema.validate(req.body, {
+    abortEarly: false,
+    allowUnknown: false,
+    stripUnknown: true,
+  });
+
   if (error) {
     return res.status(400).json({
       message: "Validation error",
       details: error.details.map((err) => err.message),
     });
   }
+
+  req.body = value;
   next();
 };
 
-module.exports = validateUser;
+// Middleware: validateUserUpdate
+const validateUserUpdate = (req, res, next) => {
+  const { error, value } = userUpdateSchema.validate(req.body, {
+    abortEarly: false,
+    allowUnknown: false,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    return res.status(400).json({
+      message: "Validation error",
+      details: error.details.map((err) => err.message),
+    });
+  }
+
+  req.body = value;
+  next();
+};
+
+module.exports = {
+  validateUserCreation,
+  validateUserUpdate,
+};

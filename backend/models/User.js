@@ -43,6 +43,21 @@ const SettingsSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Sub-schema: Social Media
+const socialMediaSchema = new mongoose.Schema(
+  {
+    platform: {
+      type: String,
+      trim: true,
+    },
+    url: {
+      type: String,
+      trim: true,
+    },
+  },
+  { _id: false }
+);
+
 // Sub-schema: Metadata
 const MetadataSchema = new mongoose.Schema(
   {
@@ -50,12 +65,7 @@ const MetadataSchema = new mongoose.Schema(
     notes: { type: String },
     goodDeeds: [{ type: String }],
     accomplishments: [{ type: String }], // Array of strings
-    socialMedia: {
-      instagram: String,
-      twitter: String,
-      linkedin: String,
-      facebook: String,
-    },
+    socialMedia: [socialMediaSchema],
     interests: [String],
     skills: [String],
     customFields: {
