@@ -1,6 +1,7 @@
-// backend/models/User.js
+// /backend/models/User.js
 
 const mongoose = require("mongoose");
+const UserEnums = require("../../shared/constants/enums"); // Import enumaration fields like positions, groups etc..
 
 // Sub-schema: Authentication
 const AuthenticationSchema = new mongoose.Schema(
@@ -90,7 +91,7 @@ const UserSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: [true, "Last is required"],
+      required: [true, "Last name is required"],
       trim: true,
       minLenght: [2, "Last name cannot be less than 2 characters"],
       maxLength: [50, "Last name cannot be exceed 50 characters"],
@@ -110,7 +111,7 @@ const UserSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       trim: true,
-      match: [/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"],
+      //match: [/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"],
     },
     dateOfBirth: {
       type: Date,
@@ -124,30 +125,18 @@ const UserSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ["active", "inactive", "suspended", "pending", "alumni"],
-        message:
-          "Status must be one of: active, inactive, suspended, pending, alumni",
+        values: UserEnums.statuses,
+        message: `Status must be one of: ${UserEnums.statuses.join(", ")}`,
       },
       default: "pending",
     },
     positions: {
       type: [String],
       enum: {
-        values: [
-          "President",
-          "Vice President",
-          "Secretary",
-          "Treasurer",
-          "Public Relations",
-          "Dessalines",
-          "Community Service",
-          "Brother-to-Brother Coordinator",
-          "Historian",
-          "White Noise Coordinator",
-          "Mission Trip Coordinator",
-          "Member",
-        ],
-        message: "Invalid position",
+        values: UserEnums.positions,
+        message: `Invalid position. Must be one of: ${UserEnums.positions.join(
+          ", "
+        )}`,
       },
       default: ["Member"],
       validate: {
@@ -163,8 +152,10 @@ const UserSchema = new mongoose.Schema(
     groups: {
       type: [String],
       enum: {
-        values: ["Admin", "PR", "Marketing", "Finance", "Member"],
-        message: "Invalid group value",
+        values: UserEnums.groups,
+        message: `Invalid group. Must be one of: ${UserEnums.groups.join(
+          ", "
+        )}`,
       },
       default: ["Member"],
       validate: {

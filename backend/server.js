@@ -1,4 +1,4 @@
-// backend/server.js
+// /backend/server.js
 
 const express = require("express");
 const connectDB = require("./config/db.js");
@@ -12,6 +12,9 @@ const app = express();
 
 // Connect to the database
 connectDB();
+
+// Allow app to use/parse JSON
+app.use(express.json({ limit: "100kb" }));
 
 // Routes
 app.use("/api/users", userRoutes);

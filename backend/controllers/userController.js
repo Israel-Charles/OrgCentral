@@ -1,4 +1,4 @@
-// backend/controllers/userController.js
+// /backend/controllers/userController.js
 
 const User = require("../models/User");
 

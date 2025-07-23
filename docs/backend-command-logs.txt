@@ -1,9 +1,0 @@
-Already have `nodejs` and `npm` installed
-npm init -y
-npm install express mongoose dotenv
-npm install -D nodemon
-touch server.js
-touch .env
-mkdir config
-touch config/db.js
-touch ../shared/models/User.js
