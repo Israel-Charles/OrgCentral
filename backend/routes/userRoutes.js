@@ -18,8 +18,8 @@ router.get("/:id", userController.getUserById);
 // POST /api/users - Create new user
 router.post("/", validateUserCreation, userController.createUser);
 
-// PUT /api/users/:id - Update user
-router.put("/:id", validateUserUpdate, userController.updateUser);
+// Patch /api/users/:id - Update user
+router.patch("/:id", validateUserUpdate, userController.updateUser);
 
 // DELETE /api/users/:id - Delete user
 router.delete("/:id", userController.deleteUser);

@@ -2,7 +2,7 @@
 
 // Enum values for User schema and validation
 const UserEnums = {
-  statuses: ["active", "inactive", "suspended", "pending", "alumni"],
+  statuses: ["Active", "Inactive", "Suspended", "Pending", "Alumni"],
   positions: [
     "President",
     "Vice President",

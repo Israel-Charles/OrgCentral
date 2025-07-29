@@ -154,9 +154,6 @@ const baseUserSchema = {
       .default([]),
     interests: customJoi.array().items(customJoi.string()).default([]),
     skills: customJoi.array().items(customJoi.string()).default([]),
-    customFields: customJoi
-      .object()
-      .pattern(customJoi.string(), customJoi.any()),
   }),
 };
 

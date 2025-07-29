@@ -72,3 +72,6 @@ This is the updated structure of the repo
         challenges-faced.txt
     README.md
     .gitignore
+
+    I added a middleware validator to validate user creation and update. The purpose was to validate the data before making database call or before it reaches mongoose.
+    

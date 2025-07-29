@@ -68,10 +68,6 @@ const MetadataSchema = new mongoose.Schema(
     socialMedia: [socialMediaSchema],
     interests: [String],
     skills: [String],
-    customFields: {
-      type: Map,
-      of: mongoose.Schema.Types.Mixed,
-    },
   },
   { _id: false }
 );
@@ -121,7 +117,7 @@ const UserSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       trim: true,
-      //match: [/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"],
+      match: [/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"],
     },
     dateOfBirth: {
       type: Date,
@@ -138,7 +134,7 @@ const UserSchema = new mongoose.Schema(
         values: UserEnums.statuses,
         message: `Status must be one of: ${UserEnums.statuses.join(", ")}`,
       },
-      default: "pending",
+      default: "Pending",
     },
     positions: {
       type: [String],

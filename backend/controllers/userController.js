@@ -44,6 +44,7 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
+      strict: "throw", // Ensures field is defined in the schema
     });
     if (!updatedUser)
       return res.status(404).json({ message: "User not found" });
