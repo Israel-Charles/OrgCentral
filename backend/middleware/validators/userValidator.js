@@ -8,6 +8,7 @@ const UserEnums = require("../../../shared/constants/enums");
 const formatName = (name) => {
   if (!name || typeof name !== "string") return name;
 
+  // Finds every word in the string and apply the function
   return name.trim().replace(/\b\w+/g, (word) => {
     if (word.includes("'")) {
       return word
@@ -92,7 +93,7 @@ const baseUserSchema = {
   status: customJoi
     .string()
     .valid(...UserEnums.statuses)
-    .default("pending"),
+    .default("Pending"),
 
   positions: customJoi
     .array()
@@ -198,6 +199,7 @@ const validateUserUpdate = (req, res, next) => {
     abortEarly: false,
     allowUnknown: false,
     stripUnknown: true,
+    noDefaults: true, // Prevents applying default values to updates
   });
 
   if (error) {
